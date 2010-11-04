@@ -13,10 +13,9 @@ class PreferencesDialog(QDialog, Ui_Properties):
         super(PreferencesDialog, self).__init__(parent)
         self.setupUi(self)
         self.signals = self.Signals()
-        self.setWindowTitle('Preferences')
         self.okButton.clicked.connect(self.saveSettings)
         self.obj = QSettings()
-        self.getSettings()
+        self.retriveSettings()
         QCoreApplication.setOrganizationName("Abhinandh")
         QCoreApplication.setOrganizationDomain("abhinandh.com")
         QCoreApplication.setApplicationName("Cloud App")
@@ -29,24 +28,44 @@ class PreferencesDialog(QDialog, Ui_Properties):
             self.rememberCheckBox.setChecked(self.settings['remember_pass'])
             self.fileListItems.setValue(self.settings['list_size'])
             self.clipboardCheckBox.setChecked(self.settings['auto_clipboard'])
+            self.notificationCheckBox.setChecked(self.settings['notifications'])
         except KeyError:
             pass
        
     def saveSettings(self):
-        self.obj.setValue('username',self.usernameLine.text())
-        self.obj.setValue('password',self.passwordLine.text())
-        self.obj.setValue('remember_pass',self.rememberCheckBox.isChecked())
-        self.obj.setValue('list_size', self.fileListItems.value())
-        self.obj.setValue('auto_clipboard', self.clipboardCheckBox.isChecked())
-        self.getSettings()
+        self.loadSettings()
+        password = self.settings['password']
+        remember = self.settings['remember_pass']
+        self.obj.setValue('username',self.settings['username'])
+        
+        if remember:
+            self.obj.setValue('password',password)
+        elif self.obj.contains('password'):
+            self.obj.remove('password')
+
+        self.obj.setValue('remember_pass',remember)
+        self.obj.setValue('list_size', self.settings['list_size'])
+        self.obj.setValue('auto_clipboard', self.settings['auto_clipboard'])
+        self.obj.setValue('notifications', self.settings['notifications'])
         self.signals.settingsChanged.emit()
 
-    def getSettings(self):
+    def loadSettings(self):
+        """load settings from the preferences dialog"""
+        self.settings['username'] = str(self.usernameLine.text())
+        self.settings['password'] = str(self.passwordLine.text())
+        self.settings['remember_pass'] = self.rememberCheckBox.isChecked()
+        self.settings['list_size'] = self.fileListItems.value()
+        self.settings['auto_clipboard'] = self.clipboardCheckBox.isChecked()
+        self.settings['notifications'] = self.notificationCheckBox.isChecked()
+        
+    def retriveSettings(self):
+        """Retrive the saved settings"""
         self.settings['username'] = str(self.obj.value('username').toString())
         self.settings['password'] = str(self.obj.value('password').toString())
         self.settings['remember_pass'] = self.obj.value('remember_pass').toBool()
         self.settings['list_size'] = self.obj.value('list_size').toInt()[0]
         self.settings['auto_clipboard'] = self.obj.value('auto_clipboard').toBool()
-
+        self.settings['notifications'] = self.obj.value('notifications').toBool()
+        
     class Signals(QObject):
         settingsChanged = pyqtSignal()

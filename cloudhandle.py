@@ -23,12 +23,13 @@ class CloudHandle(object):
         try:
             username = self.pdialog.settings['username']
             password = self.pdialog.settings['password']
+            if username == '' or password == '':
+               raise ValueError('Empty password or username')
             self.api = CloudApi(username, password)
             self.getFileList()
-        except KeyError:
+        except (KeyError, ValueError):
             self.pdialog.show()
-            print "Couldn't read the settings"
-        
+            print "Error reading settings"    
         
     def getFileList(self):
         self.api.getFileList(self.pdialog.settings['list_size'], self.gotFileList)
@@ -49,7 +50,12 @@ class CloudHandle(object):
         self.fileList.pop()
         self.signals.gotFileList.emit(self.fileList)
         if self.pdialog.settings['auto_clipboard']:
-            self.signals.loadClipboard(item['url'])
+            self.signals.loadClipboard.emit(item['url'])
+        if self.pdialog.settings['notifications']:
+            if item['item_type'] == 'bookmark':
+                self.notify('Bookmarked - '+item['name'], item['url'])
+            else:
+                self.notify('File Uploaded - '+item['name'], item['url'])
         
     def deleteItem(self, url):
         url = str(url)
@@ -57,9 +63,24 @@ class CloudHandle(object):
         
     def deleted(self, x):
         self.getFileList()
+        if self.pdialog.settings['notifications']:
+            self.notify("Deleted - "+x['name'], 'This item was removed from your CloudApp')
 
     def showPreferences(self):
         self.pdialog.show()
+        
+    def notify(self, title, text, icon=None):
+        try:
+            import pynotify
+            if pynotify.init("Cloud App"):
+                n = pynotify.Notification(title, text)
+                n.set_timeout(5)
+                n.show()
+            else:
+                print "there was a problem initializing the pynotify module"
+        except:
+            print "you don't seem to have pynotify installed"
+        
         
     class Signals(QObject):
         gotFileList = pyqtSignal(list)

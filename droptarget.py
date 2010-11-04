@@ -15,9 +15,8 @@ class DropWidget(QLabel):
         self.setWindowFlags(Qt.X11BypassWindowManagerHint | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.move(qApp.desktop().width() - 236, 60)
         self.signals = self.Signals()
-        self.setPixmap(QPixmap(':/bg/cloudapp_droptarget.png'))
         self.setAcceptDrops(1)
-        self.resize(QSize(240,68))
+        self.resize(QSize(238,68))
         self.setAlignment(Qt.AlignCenter)
               
         self.trayIcon = TrayIcon()
@@ -56,10 +55,14 @@ class DropWidget(QLabel):
     def slide(self):
         current = self.geometry()
         new = QRect(current)
+        bg = ''
         if current.x() > (qApp.desktop().width() - 236):
             new.moveTopLeft(QPoint(qApp.desktop().width() - 236, current.y()))
+            bg = ':/bg/cloudapp_droptarget_out.png'
         else:
             new.moveTopLeft(QPoint(qApp.desktop().width() - 19, current.y()))
+            bg = ':/bg/cloudapp_droptarget_in.png'
+        self.setPixmap(QPixmap(bg))
         self.a = QPropertyAnimation(self, "geometry")
         self.a.setDuration(500)
         self.a.setStartValue(current)

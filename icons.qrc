@@ -18,6 +18,7 @@
         <file>icons/reload.png</file>
     </qresource>
     <qresource prefix="/bg">
-        <file>cloudapp_droptarget.png</file>
+        <file>cloudapp_droptarget_in.png</file>
+        <file>cloudapp_droptarget_out.png</file>
     </qresource>
 </RCC>
