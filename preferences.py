@@ -29,6 +29,8 @@ class PreferencesDialog(QDialog, Ui_Properties):
             self.fileListItems.setValue(self.settings['list_size'])
             self.clipboardCheckBox.setChecked(self.settings['auto_clipboard'])
             self.notificationCheckBox.setChecked(self.settings['notifications'])
+            self.voffsetSlider.setMaximum(qApp.desktop().height())
+            self.voffsetSlider.setValue(self.settings['drop_topoffset'])
         except KeyError:
             pass
        
@@ -47,6 +49,7 @@ class PreferencesDialog(QDialog, Ui_Properties):
         self.obj.setValue('list_size', self.settings['list_size'])
         self.obj.setValue('auto_clipboard', self.settings['auto_clipboard'])
         self.obj.setValue('notifications', self.settings['notifications'])
+        self.obj.setValue('drop_topoffset', self.settings['drop_topoffset'])
         self.signals.settingsChanged.emit()
 
     def loadSettings(self):
@@ -57,6 +60,7 @@ class PreferencesDialog(QDialog, Ui_Properties):
         self.settings['list_size'] = self.fileListItems.value()
         self.settings['auto_clipboard'] = self.clipboardCheckBox.isChecked()
         self.settings['notifications'] = self.notificationCheckBox.isChecked()
+        self.settings['drop_topoffset'] = self.voffsetSlider.value()
         
     def retriveSettings(self):
         """Retrive the saved settings"""
@@ -66,6 +70,7 @@ class PreferencesDialog(QDialog, Ui_Properties):
         self.settings['list_size'] = self.obj.value('list_size').toInt()[0]
         self.settings['auto_clipboard'] = self.obj.value('auto_clipboard').toBool()
         self.settings['notifications'] = self.obj.value('notifications').toBool()
-        
+        self.settings['drop_topoffset'] = self.obj.value('drop_topoffset').toInt()[0]
+
     class Signals(QObject):
         settingsChanged = pyqtSignal()

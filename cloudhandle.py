@@ -20,6 +20,7 @@ class CloudHandle(object):
         self.initializeApi()
 
     def initializeApi(self):
+        self.connected = False
         try:
             username = self.pdialog.settings['username']
             password = self.pdialog.settings['password']
@@ -35,6 +36,7 @@ class CloudHandle(object):
         self.api.getFileList(self.pdialog.settings['list_size'], self.gotFileList)
         
     def gotFileList(self, l):
+        self.connected = True
         self.fileList = l
         self.signals.gotFileList.emit(l)
         
@@ -44,6 +46,7 @@ class CloudHandle(object):
             self.api.uploadFile(url, self.itemAdded)
         else:
             self.api.bookmark(url, self.itemAdded)
+        self.signals.uploadStarted.emit()
             
     def itemAdded(self, item):
         self.fileList.insert(0, item)
@@ -56,6 +59,7 @@ class CloudHandle(object):
                 self.notify('Bookmarked - '+item['name'], item['url'])
             else:
                 self.notify('File Uploaded - '+item['name'], item['url'])
+        self.signals.uploadFinished.emit()
         
     def deleteItem(self, url):
         url = str(url)
@@ -85,3 +89,5 @@ class CloudHandle(object):
     class Signals(QObject):
         gotFileList = pyqtSignal(list)
         loadClipboard = pyqtSignal(str)
+        uploadStarted = pyqtSignal()
+        uploadFinished = pyqtSignal()

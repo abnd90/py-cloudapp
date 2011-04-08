@@ -17,6 +17,7 @@ def main():
         QMessageBox.critical(None, "Systray", "I couldn't detect any system tray on this system.")
         return -1
     mainWidget = DropWidget()
+    mainWidget.show()
     sys.exit(app.exec_())
         
 if __name__=='__main__':

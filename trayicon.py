@@ -20,7 +20,7 @@ class TrayIcon(QSystemTrayIcon):
         self.apiHandle = CloudHandle()
         self.connectActions()
         self.deleteAction = DeleteAction()
-        
+        self.noOfUploads = 0    
         self.setIcon(QIcon(":/icons/icons/icon.png"))
         self.setToolTip("Cloud App")
         
@@ -61,6 +61,8 @@ class TrayIcon(QSystemTrayIcon):
         self.prefAction.triggered.connect(self.apiHandle.showPreferences)
         self.apiHandle.signals.gotFileList[list].connect(self.populateFileList)
         self.apiHandle.signals.loadClipboard[str].connect(self.loadClipboardText)
+        self.apiHandle.signals.uploadStarted.connect(self.uploadStatusAdd)
+        self.apiHandle.signals.uploadFinished.connect(self.uploadStatusRemove)
 
     def populateFileList(self, fileList):
         #PyQt converts all Strings to QStrings, converting back.
@@ -106,24 +108,21 @@ class TrayIcon(QSystemTrayIcon):
     def openWebInterface(self):
         QDesktopServices().openUrl(QUrl('http://my.cl.ly'))
 
-        
-#    def updateStatus(self, url):
+    def uploadStatusAdd(self):
+        self.uploadStatus.setVisible(1)
+        self.noOfUploads += 1
+        text = "Adding "+ str(self.noOfUploads) + " File(s)." 
+        self.uploadStatus.setText(text)
 
-#        if url.toString() != "":
-#            self.uploadStatus.setVisible(1)
-#            text = "Uploading "+ str(QFileInfo(url.toString()).fileName())\
-#                 if url.scheme() == 'file' else "Bookmarking "+ url.host() + url.path()
-#            self.uploadStatus.setText(text[:20] + '...' if len(text) > 20 else '')
+    def uploadStatusRemove(self):
+        self.noOfUploads -= 1
+        if self.noOfUploads == 0:
+            self.uploadStatus.setVisible(0)
+        else:
+            text = "Adding "+ str(self.noOfUploads) + " File(s)." 
+            self.uploadStatus.setText(text)
 
-#        else:
-#            self.uploadStatus.setVisible(0)
 
-#    def updateQueueSize(self, qsize):
-#        if qsize:
-#            self.queueStatus.setVisible(1)
-#            self.queueStatus.setText(str(qsize)+" item"+ ("s" if qsize > 1 else '') + " in Queue.")
-#        else:
-#            self.queueStatus.setVisible(0)
     class Signals(QObject):
         delete = pyqtSignal(str)
 

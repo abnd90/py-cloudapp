@@ -13,7 +13,6 @@ class DropWidget(QLabel):
     def __init__(self, parent=None):
         super(QWidget,self).__init__(parent)
         self.setWindowFlags(Qt.X11BypassWindowManagerHint | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-        self.move(qApp.desktop().width() - 236, 60)
         self.signals = self.Signals()
         self.setAcceptDrops(1)
         self.resize(QSize(238,68))
@@ -24,13 +23,18 @@ class DropWidget(QLabel):
         self.trayIcon.activated[QSystemTrayIcon.ActivationReason].connect(self.trayActivated)
         self.signals.itemDropped[str].connect(self.trayIcon.apiHandle.addItem)
         
-        self.show()
+        self.trayIcon.apiHandle.pdialog.voffsetSlider.valueChanged[int].connect(self.vmove)
+        self.move(qApp.desktop().width()-227,self.trayIcon.apiHandle.pdialog.settings['drop_topoffset'])
         self.slideIn()
 
+    def vmove(self, val):
+        self.move(self.x(),val)
+
     def dragEnterEvent(self, event):
-        event.acceptProposedAction()
-        self.slideOut()
-        
+        if self.trayIcon.apiHandle.connected:
+            event.acceptProposedAction()
+            self.slideOut()
+
     def dropEvent(self, event):
         mimeData = event.mimeData()
         pos = event.pos()
@@ -39,7 +43,7 @@ class DropWidget(QLabel):
                 for url in mimeData.urls():
                     if url.scheme() in ('file', 'http','https','ftp'):
                         self.signals.itemDropped.emit(url.toString())
-            
+
     def trayActivated(self, reason):
         if reason == QSystemTrayIcon.Trigger:
             self.toggle()
@@ -48,11 +52,11 @@ class DropWidget(QLabel):
                 deleteCheckBox = self.trayIcon.deleteAction.widget.checkBox
                 if deleteCheckBox.isChecked():
                     deleteCheckBox.toggle()
-                    
+
     def mousePressEvent(self, event):
         if event.x() in range(4,18):
             self.toggle()
-        
+
     def slide(self, newRect):
         self.a = QPropertyAnimation(self, "geometry")
         self.a.setDuration(500)
@@ -60,7 +64,7 @@ class DropWidget(QLabel):
         self.a.setEndValue(newRect)
         self.a.setEasingCurve(QEasingCurve.InOutQuad)
         self.a.start()          
-    
+
     def slideOut(self):        
         current = self.geometry()
         new = QRect(current)
@@ -76,14 +80,13 @@ class DropWidget(QLabel):
         self.setPixmap(QPixmap(bg))
         new.moveTopLeft(QPoint(qApp.desktop().width() - 19, current.y()))
         self.slide(new)
-    
+
     def toggle(self):
         current = self.geometry()
         if current.x() > (qApp.desktop().width() - 236):
-            self.slideOut();
+            self.slideOut()
         else:
-            self.slideIn();
+            self.slideIn()
 
     class Signals(QObject):
         itemDropped = pyqtSignal(str)
-    
