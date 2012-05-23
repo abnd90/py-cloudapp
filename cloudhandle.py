@@ -3,9 +3,9 @@
 #Copyright (C)2010 Abhinandh <abhinandh@gmail.com>
 #This Program in licenser under General Public License Ver 3
 
-from PyQt4.QtCore import QThread, QObject, pyqtSignal, QFileInfo, QString, QUrl
+from PyQt4.QtCore import QThread, QObject, pyqtSignal, QFileInfo, QUrl
 from cloud_api import CloudApi
-import urlparse
+import urllib.parse, logging
 
 from preferences import PreferencesDialog
 
@@ -30,7 +30,7 @@ class CloudHandle(object):
             self.getFileList()
         except (KeyError, ValueError):
             self.pdialog.show()
-            print "Error reading settings"    
+            logging.warn("Couldn't reading settings")
         
     def getFileList(self):
         self.api.getFileList(self.pdialog.settings['list_size'], self.gotFileList)
@@ -42,7 +42,7 @@ class CloudHandle(object):
         
     def addItem(self, url):
         url = str(url)
-        if urlparse.urlparse(url).scheme == "file":
+        if urllib.parse.urlparse(url).scheme == "file":
             self.api.uploadFile(url, self.itemAdded)
         else:
             self.api.bookmark(url, self.itemAdded)
@@ -81,9 +81,9 @@ class CloudHandle(object):
                 n.set_timeout(5)
                 n.show()
             else:
-                print "there was a problem initializing the pynotify module"
+                logging.error("there was a problem initializing the pynotify module")
         except:
-            print "you don't seem to have pynotify installed"
+            logging.info("you don't seem to have pynotify installed")
         
         
     class Signals(QObject):

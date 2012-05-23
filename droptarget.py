@@ -46,9 +46,10 @@ class DropWidget(QLabel):
 
     def trayActivated(self, reason):
         if reason == QSystemTrayIcon.Trigger:
-            self.toggle()
+            if self.trayIcon.apiHandle.connected:
+                self.toggle()
         elif reason == QSystemTrayIcon.Context:
-            if hasattr(self.trayIcon, "deleteAction"):
+            if hasattr(self.trayIcon, "deleteAction"): 
                 deleteCheckBox = self.trayIcon.deleteAction.widget.checkBox
                 if deleteCheckBox.isChecked():
                     deleteCheckBox.toggle()

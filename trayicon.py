@@ -4,7 +4,7 @@
 #This Program in licenser under General Public License Ver 3
 
 from PyQt4.QtGui import *
-from PyQt4.QtCore import QString, QThread, QFileInfo, QUrl, QObject, pyqtSignal, QFileInfo
+from PyQt4.QtCore import QThread, QFileInfo, QUrl, QObject, pyqtSignal, QFileInfo
 
 from cloudhandle import CloudHandle
 import icons_rc
@@ -28,11 +28,11 @@ class TrayIcon(QSystemTrayIcon):
         self.contextMenu = QMenu()
 
         self.quitAction = QAction(QIcon(":/icons/icons/quit.png"), "Quit",self.contextMenu)
-        self.prefAction = QAction(QIcon(":/icons/icons/preferences.png"), "Preferences",self.contextMenu)
-        self.reloadAction = QAction(QIcon(":/icons/icons/reload.png"), "Reload",self.contextMenu)
-        self.openWebAction = QAction(QIcon(":/icons/icons/web-interface.png"), "Open Web Interface",self.contextMenu)
+        self.quitAction.setIconVisibleInMenu(True)
+        self.prefAction = QAction("Preferences",self.contextMenu)
+        self.reloadAction = QAction("Reload",self.contextMenu)
+        self.openWebAction = QAction("Open Web Interface",self.contextMenu)
         self.fileListMenu = QMenu("Loading File list...")
-        self.fileListMenu.setIcon(QIcon(":/icons/icons/list-unordered.png"))
         self.fileListMenu.setEnabled(0)
         self.uploadStatus = QAction("",self.contextMenu)
         self.uploadStatus.setEnabled(0)
@@ -65,15 +65,7 @@ class TrayIcon(QSystemTrayIcon):
         self.apiHandle.signals.uploadFinished.connect(self.uploadStatusRemove)
 
     def populateFileList(self, fileList):
-        #PyQt converts all Strings to QStrings, converting back.
-        l = []
-        for item in fileList:
-            m = {}   
-            for key in item:
-                m[str(key)] = str(item[key])
-            l.append(m)
-        
-        self.fileList = l
+        self.fileList = fileList
         self.fileListMenu.clear()
         self.fileListMenu.setTitle("File List")
         self.fileListMenu.setEnabled(1)
@@ -83,6 +75,7 @@ class TrayIcon(QSystemTrayIcon):
             text = item["name"]
             newAction.setText(text[:20] + ('...' if len(text) > 20 else ''))
             newAction.setIcon(QIcon(":/icons/icons/" + QFileInfo(item["icon"]).fileName()))
+            newAction.setIconVisibleInMenu(True)
             self.fileListMenu.addAction(newAction)
             item["action"] = newAction
 

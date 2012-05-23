@@ -64,13 +64,13 @@ class PreferencesDialog(QDialog, Ui_Properties):
         
     def retriveSettings(self):
         """Retrive the saved settings"""
-        self.settings['username'] = str(self.obj.value('username').toString())
-        self.settings['password'] = str(self.obj.value('password').toString())
-        self.settings['remember_pass'] = self.obj.value('remember_pass').toBool()
-        self.settings['list_size'] = self.obj.value('list_size').toInt()[0]
-        self.settings['auto_clipboard'] = self.obj.value('auto_clipboard').toBool()
-        self.settings['notifications'] = self.obj.value('notifications').toBool()
-        self.settings['drop_topoffset'] = self.obj.value('drop_topoffset').toInt()[0]
+        self.settings['username'] = self.obj.value('username')
+        self.settings['password'] = self.obj.value('password')
+        self.settings['remember_pass'] = bool(self.obj.value('remember_pass'))
+        self.settings['list_size'] = int(self.obj.value('list_size'))
+        self.settings['auto_clipboard'] = bool(self.obj.value('auto_clipboard'))
+        self.settings['notifications'] = bool(self.obj.value('notifications'))
+        self.settings['drop_topoffset'] = int(self.obj.value('drop_topoffset'))
 
     class Signals(QObject):
         settingsChanged = pyqtSignal()

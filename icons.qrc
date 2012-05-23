@@ -1,24 +1,20 @@
 <RCC>
-    <qresource prefix="/icons">
-        <file>icons/dialog-ok.png</file>
-        <file>icons/web-interface.png</file>
-        <file>icons/dialog-ok-apply.png</file>
-        <file>icons/dialog-cancel.png</file>
-        <file>icons/archive.png</file>
-        <file>icons/icon.png</file>
-        <file>icons/image.png</file>
-        <file>icons/text.png</file>
-        <file>icons/unknown.png</file>
-        <file>icons/video.png</file>
-        <file>icons/bookmark.png</file>
-        <file>icons/audio.png</file>
-        <file>icons/list-unordered.png</file>
-        <file>icons/preferences.png</file>
-        <file>icons/quit.png</file>
-        <file>icons/reload.png</file>
-    </qresource>
-    <qresource prefix="/bg">
-        <file>cloudapp_droptarget_in.png</file>
-        <file>cloudapp_droptarget_out.png</file>
-    </qresource>
+  <qresource prefix="/icons">
+    <file>icons/dialog-ok.png</file>
+    <file>icons/dialog-ok-apply.png</file>
+    <file>icons/dialog-cancel.png</file>
+    <file>icons/archive.png</file>
+    <file>icons/icon.png</file>
+    <file>icons/image.png</file>
+    <file>icons/text.png</file>
+    <file>icons/unknown.png</file>
+    <file>icons/video.png</file>
+    <file>icons/bookmark.png</file>
+    <file>icons/audio.png</file>
+    <file>icons/quit.png</file>
+  </qresource>
+  <qresource prefix="/bg">
+    <file>cloudapp_droptarget_in.png</file>
+    <file>cloudapp_droptarget_out.png</file>
+  </qresource>
 </RCC>
