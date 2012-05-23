@@ -15,7 +15,7 @@ class MultiPartForm(object):
         self.boundary = b'AaB03x'
 
     def getContentType(self):
-        return 'multipart/form-data; boundary=%s' % self.boundary
+        return b'multipart/form-data; boundary=' + self.boundary
 
     def addField(self, name, value):
         """Add a form field to the form data."""

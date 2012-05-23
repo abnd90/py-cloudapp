@@ -57,6 +57,7 @@ class TrayIcon(QSystemTrayIcon):
         self.quitAction.triggered.connect(qApp.quit)
         self.openWebAction.triggered.connect(self.openWebInterface)
         self.fileListMenu.triggered[QAction].connect(self.menuItemClicked)
+        self.reloadAction.triggered.connect(self.apiHandle.getFileList)
         self.signals.delete[str].connect(self.apiHandle.deleteItem)
         self.prefAction.triggered.connect(self.apiHandle.showPreferences)
         self.apiHandle.signals.gotFileList[list].connect(self.populateFileList)

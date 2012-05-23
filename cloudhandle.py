@@ -73,11 +73,11 @@ class CloudHandle(object):
     def showPreferences(self):
         self.pdialog.show()
         
-    def notify(self, title, text, icon=None):
+    def notify(self, title, text, icon="dialog-information"):
         try:
-            import pynotify
+            from gi.repository import Notify as pynotify
             if pynotify.init("Cloud App"):
-                n = pynotify.Notification(title, text)
+                n = pynotify.Notification.new(title, text, icon)
                 n.set_timeout(5)
                 n.show()
             else:
